@@ -308,11 +308,15 @@ def evaluate(args, model, tokenizer, labels, pad_token_label_id, mode, prefix=""
     y_true = MultiLabelBinarizer().fit_transform(out_label_list)
     y_pred = MultiLabelBinarizer().fit_transform(preds_list)
 
+    print(out_label_list)
+    print(preds_list)
+    print(y_true)
+    print(y_pred)
     results = {
         "loss": eval_loss,
-        "precision": precision_score(y_true, y_pred, average='macro'),
-        "recall": recall_score(y_true, y_pred, average='macro'),
-        "f1": f1_score(y_true, y_pred, average='macro'),
+        "precision": precision_score(y_true, y_pred, average='micro'),
+        "recall": recall_score(y_true, y_pred, average='micro'),
+        "f1": f1_score(y_true, y_pred, average='micro'),
         "accuracy": accuracy_score(y_true, y_pred),
     }
 
