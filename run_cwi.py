@@ -26,7 +26,7 @@ import numpy as np
 import torch
 # from seqeval.metrics import f1_score, precision_score, recall_score, accuracy_score
 from sklearn.metrics import f1_score, precision_score, recall_score, accuracy_score
-from sklearn.preprocessing import MultiLabelBinarizer
+# from sklearn.preprocessing import MultiLabelBinarizer
 from torch.nn import CrossEntropyLoss
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler, TensorDataset
 from torch.utils.data.distributed import DistributedSampler
@@ -66,6 +66,17 @@ def set_seed(args):
     torch.manual_seed(args.seed)
     if args.n_gpu > 0:
         torch.cuda.manual_seed_all(args.seed)
+
+
+def flatten(t):
+    flat_list = []
+    for sublist in t:
+        for item in sublist:
+            if item == 'N':
+                flat_list.append(0)
+            else:
+                flat_list.append(1)
+    return flat_list
 
 
 def train(args, train_dataset, model, tokenizer, labels, pad_token_label_id):
@@ -319,13 +330,15 @@ def evaluate(args, model, tokenizer, labels, pad_token_label_id, mode, prefix=""
     #     "f1": f1_score(y_true, y_pred, average='micro'),
     #     "accuracy": accuracy_score(y_true, y_pred),
     # }
+    flat_out_label_list = flatten(out_label_list)
+    flat_preds_list = flatten(preds_list)
 
     results = {
         "loss": eval_loss,
-        "precision": precision_score(out_label_list, preds_list),
-        "recall": recall_score(out_label_list, preds_list),
-        "f1": f1_score(out_label_list, preds_list, average='macro'),
-        "accuracy": accuracy_score(out_label_list,preds_list),
+        "precision": precision_score(flat_out_label_list, flat_preds_list, average='macro'),
+        "recall": recall_score(flat_out_label_list, flat_preds_list, average='macro'),
+        "f1": f1_score(flat_out_label_list, flat_preds_list, average='macro'),
+        "accuracy": accuracy_score(flat_out_label_list,flat_preds_list),
     }
 
     logger.info("***** Eval results %s *****", prefix)
