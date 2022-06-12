@@ -680,7 +680,7 @@ def main():
         tokenizer = AutoTokenizer.from_pretrained(args.output_dir, **tokenizer_args)
         model = AutoModelForTokenClassification.from_pretrained(args.output_dir)
         model.to(args.device)
-        modes = ['News_Test', 'WikiNews_Test', 'Wikipedia_Test', 'InScript_test', 'OneStop_test']
+        modes = ['News_Test', 'WikiNews_Test', 'Wikipedia_Test', 'InScript_test', 'OneStop_test', 'lcp_single_train_corrected_new_token']
         # modes = ['test', 'test1']
         output_test_results_file = os.path.join(args.output_dir, "test_results.txt")
         try:
